@@ -510,14 +510,15 @@ export const sommeCoutModulesParCodeFormation = async (req: Request, res: Respon
         const code_formation = Number(req.params.code_formation);
         
         // Utilisez la méthode sum de Sequelize pour obtenir la somme du coût des modules
-        const sum = await Module.sum('cout_module', {
+        let sum = await Module.sum('cout_module', {
             where: {
                 code_formation: code_formation
             }
         });
 
         if (sum === null) {
-            res.status(404).send(`Aucun module trouvé pour la formation donnée.`);
+            sum = 0;
+            res.json({ sum });
         } else {
             res.json({ sum });
         }
