@@ -63,7 +63,7 @@ Paiement.belongsTo(Participant, {
 });
 
 Paiement.belongsTo(Utilisateur, {
-  foreignKey: "code_participant",
+  foreignKey: "code_utilisateur",
   as: "transaction_utilisateur",
 });
 

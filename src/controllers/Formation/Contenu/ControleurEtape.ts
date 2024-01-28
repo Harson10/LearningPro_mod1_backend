@@ -112,8 +112,32 @@ export const creerEtape = async (req: Request, res: Response): Promise<void> => 
  */
 export const rapporterEtapes = async (req: Request, res: Response): Promise<void> => {
   try {
-    const etapes_a_rapporter = await Etape.findAll();
-    res.json(etapes_a_rapporter);
+    const etapes = await Etape.findAll();
+
+    const codesModules = etapes.map((etape) => etape.code_module);
+
+    const modules = await Module.findAll({
+      where: {
+        code_module: codesModules,
+      },
+      attributes: ['code_module', 'nom_module'],
+    });
+
+    const modulesMap: Record<number, string> = {};
+    modules.forEach((module) => {
+      modulesMap[module.code_module] = module.nom_module;
+    });
+
+    const etapesAvecModule = etapes.map((etape) => ({
+      num_etape: etape.num_etape,
+      nom_etape: etape.nom_etape,
+      texte: etape.texte,
+      code_module: etape.code_module,
+      module: modulesMap[etape.code_module],
+    }));
+
+    res.json(etapesAvecModule);
+
   } catch (error) {
     console.error(error);
     res.status(500).send(`Une erreur s'est produite lors de la récupération des étapes.`);
@@ -170,6 +194,78 @@ export const rapporterParNumEtape = async (req: Request, res: Response): Promise
  *   get:
  *     security:
  *       - bearerAuth: []
+ *     summary: Obtenir l'étape associée à un module
+ *     description: Recherche d'étape par code de module
+ *     parameters:
+ *       - in: path
+ *         name: code_module
+ *         required: true
+ *         description: Code module associé à l'étape
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Liste des étapes
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Etape'
+ *       404:
+ *         description: Aucune étape trouvée pour le module spécifié
+ *       500:
+ *         description: Erreur interne au serveur
+ */
+export const rapporteEtapeParCodeModule = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const code_module = Number(req.params.code_module);
+    const etapes = await Etape.findAll({
+      where: {
+        code_module: code_module
+      }
+    });
+
+    if (etapes.length === 0) {
+      res.status(404).send(`Étape non trouvée`);
+    } else {
+      const codesModules = etapes.map((etape) => etape.code_module);
+
+    const modules = await Module.findAll({
+      where: {
+        code_module: codesModules,
+      },
+      attributes: ['code_module', 'nom_module'],
+    });
+
+    const modulesMap: Record<number, string> = {};
+    modules.forEach((module) => {
+      modulesMap[module.code_module] = module.nom_module;
+    });
+
+    const etapesAvecModule = etapes.map((etape) => ({
+      num_etape: etape.num_etape,
+      nom_etape: etape.nom_etape,
+      texte: etape.texte,
+      code_module: etape.code_module,
+      module: modulesMap[etape.code_module],
+    }));
+
+    res.json(etapesAvecModule);
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).send(`Une erreur s'est produite lors de la récupération de l'étape.`);
+  }
+};
+
+
+/**
+ * @swagger
+ * /etape/nombre_par_module/{code_module}:
+ *   get:
+ *     security:
+ *       - bearerAuth: []
  *     summary: Obtenir le nombre d'étapes associées à un module
  *     description: Recherche du nombre d'étapes par code de module
  *     parameters:
@@ -195,7 +291,7 @@ export const rapporterParNumEtape = async (req: Request, res: Response): Promise
  *       500:
  *         description: Erreur interne au serveur
  */
-export const rapporteEtapeParCodeModule = async (req: Request, res: Response): Promise<void> => {
+export const rapporteNbEtapeParCodeModule = async (req: Request, res: Response): Promise<void> => {
   try {
     const code_module = Number(req.params.code_module);
     const etapeCount = await Etape.count({
@@ -204,12 +300,7 @@ export const rapporteEtapeParCodeModule = async (req: Request, res: Response): P
       }
     });
 
-    if (!etapeCount) {
-      res.status(404).send(`Étape non trouvée`);
-    } else {
-      res.json(etapeCount);
-    }
-    // res.json({ count: etapeCount });
+    res.json({ count: etapeCount });
   } catch (error) {
     console.error(error);
     res.status(500).send(`Une erreur s'est produite lors de la récupération du nombre d'étapes.`);

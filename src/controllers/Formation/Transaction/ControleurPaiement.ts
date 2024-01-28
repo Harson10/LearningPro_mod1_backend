@@ -3,6 +3,7 @@ import Paiement from "../../../models/Formation/Transaction/Paiement";
 import Formation from "../../../models/Formation/Contenu/Formation";
 import Participant from "../../../models/utilisateurs/Participant/Participant";
 import Utilisateur from "../../../models/utilisateurs/Utilisateur";
+import { where } from "sequelize";
 
 /**
  * @swagger
@@ -174,23 +175,26 @@ export const creerPaiement = async (req: Request, res: Response): Promise<void> 
  */
 export const rapporterPaiements = async (req: Request, res: Response): Promise<void> => {
     try {
-        const paiement_a_rapporter = await Paiement.findAll({
-          include: [{
+      const paiement_a_rapporter = await Paiement.findAll({
+        include: [
+          {
             model: Formation,
-            as: 'formation',
+            as: 'transaction_formation',
             attributes: ['code_formation', 'nom_formation', 'cout_formation', 'publication'],
-          } &&
+          },
           {
             model: Participant,
-            as: 'participant',
-            attributes: ['code_participant','code_utilisateur'],
-          } &&
+            as: 'transaction_participant',
+            attributes: ['code_participant', 'code_utilisateur'],
+          },
           {
             model: Utilisateur,
-            as: 'utilisateur',
-            attributes: ['code_utilisateur','nom','prenom'],
-          }]
-        });
+            as: 'transaction_utilisateur', 
+            attributes: ['code_utilisateur', 'nom', 'prenom'],
+          }
+        ],
+      });
+
         res.json(paiement_a_rapporter);
     } catch (error) {
         console.error(error);
@@ -198,7 +202,7 @@ export const rapporterPaiements = async (req: Request, res: Response): Promise<v
     }
 };
 
-// Rapport de paiement par nnuméro de facture
+// Rapport de paiement par numéro de facture
 /**
  * @swagger
  * /paiement/{num_facture}:
@@ -230,16 +234,23 @@ export const rapporterParNumFacture = async (req: Request, res: Response): Promi
     try {
       const num_facture = Number(req.params.num_facture);
       const paiement_a_rapporter = await Paiement.findByPk(num_facture, {
-        include: [{
-          model: Formation,
-          as: 'formation',
-          attributes: ['code_formation','nom_formation'],
-        },
-        {
-          model: Participant && Utilisateur,
-          as: 'participant',
-          attributes: ['code_participant','code_utilisateur','nom','prenom'],
-        }]
+        include: [
+          {
+            model: Formation,
+            as: 'transaction_formation',
+            attributes: ['code_formation', 'nom_formation', 'cout_formation', 'publication'],
+          },
+          {
+            model: Participant,
+            as: 'transaction_participant',
+            attributes: ['code_participant', 'code_utilisateur'],
+          },
+          {
+            model: Utilisateur,
+            as: 'transaction_utilisateur', 
+            attributes: ['code_utilisateur', 'nom', 'prenom'],
+          }
+        ],
       });
   
       if (!paiement_a_rapporter) {
