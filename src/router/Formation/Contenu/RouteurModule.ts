@@ -3,6 +3,7 @@ import {
     creerModule,
     rapporterModulesParCodeFormation,
     rapporterModules,
+    rapporterModulesAvecFormationPublique,
     rapporterParCodeModule,
     modifierModule,
     supprimerModule,
@@ -15,6 +16,7 @@ const routeurModule = Router();
 routeurModule.post("/creer/", creerModule);
 routeurModule.get("/par_formation/:code_formation", rapporterModulesParCodeFormation);
 routeurModule.get("/", rapporterModules);
+routeurModule.get("/publique", rapporterModulesAvecFormationPublique);
 routeurModule.get("/:code_module", rapporterParCodeModule);
 routeurModule.put("/modifier/:code_module", modifierModule);
 routeurModule.delete("/supprimer/:code_module", supprimerModule);

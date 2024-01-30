@@ -147,6 +147,54 @@ export const rapporterModules = async (req: Request, res: Response): Promise<voi
 };
 
 
+/**
+ * @swagger
+ * /module/publique:
+ *   get:
+ *     security:
+ *       - bearerAuth: []
+ *     summary: Obtenir une liste de tous les modules avec formation publique
+ *     description: Liste contenant des informations sur tous les modules dont la formation est publique.
+ *     responses:
+ *       200:
+ *         description: Liste des modules avec formation publique
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/ModuleAvecFormation'
+ *       500:
+ *         description: Erreur interne au serveur
+ */
+export const rapporterModulesAvecFormationPublique = async (req: Request, res: Response): Promise<void> => {
+    try {
+        const modules = await Module.findAll({
+            include: [{
+                model: Formation,
+                where: { publication: 'Oui' },
+                attributes: ['code_formation', 'nom_formation'],
+                as: 'formation',
+                required: true, // Utilisez required pour une jointure interne (seuls les modules avec des formations correspondantes seront inclus)
+            }],
+        });
+
+        const modulesAvecFormation = modules.map((module) => ({
+            code_module: module.code_module,
+            nom_module: module.nom_module,
+            cout_module: module.cout_module,
+            code_formation: module.code_formation,
+            formation: module.formation ? module.formation.nom_formation : '',
+        }));
+
+        res.json(modulesAvecFormation);
+    } catch (error) {
+        console.error(error);
+        res.status(500).send(`Une erreur s'est produite lors de la récupération des modules.`);
+    }
+};
+
+
 
 // Rapport d'un module par code_module
 /**

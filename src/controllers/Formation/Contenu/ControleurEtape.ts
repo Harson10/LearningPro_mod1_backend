@@ -351,7 +351,7 @@ export const rapporteNbEtapeParCodeModule = async (req: Request, res: Response):
 export const modifierEtape = async (req: Request, res: Response): Promise<void> => {
   try {
     const num_etape = Number(req.params.num_etape);
-    const { nom_etape, texte, code_module } = req.body;
+    const { nom_etape, texte } = req.body;
     const etape_a_modifier = await Etape.findByPk(num_etape);
 
     if (!etape_a_modifier) {
@@ -359,7 +359,6 @@ export const modifierEtape = async (req: Request, res: Response): Promise<void> 
     } else {
       etape_a_modifier.nom_etape = nom_etape || etape_a_modifier.nom_etape;
       etape_a_modifier.texte = texte || etape_a_modifier.texte;
-      etape_a_modifier.code_module = code_module || etape_a_modifier.code_module;
 
       await etape_a_modifier.save();
       res.json(etape_a_modifier);
