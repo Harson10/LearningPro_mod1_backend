@@ -175,7 +175,7 @@ export const rapporterModulesAvecFormationPublique = async (req: Request, res: R
                 where: { publication: 'Oui' },
                 attributes: ['code_formation', 'nom_formation'],
                 as: 'formation',
-                required: true, // Utilisez required pour une jointure interne (seuls les modules avec des formations correspondantes seront inclus)
+                required: true, // jointure interne (seuls les modules avec des formations correspondantes seront inclus)
             }],
         });
 

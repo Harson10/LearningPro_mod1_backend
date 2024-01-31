@@ -202,6 +202,79 @@ export const rapporterPaiements = async (req: Request, res: Response): Promise<v
     }
 };
 
+
+
+/**
+ * @swagger
+ * /paiement/formation-utilisateur/{code_formation}/{code_utilisateur}:
+ *   get:
+ *     security:
+ *       - bearerAuth: []
+ *     summary: Obtenir une liste de paiements en fonction du code_formation et du code_utilisateur
+ *     description: Liste des paiements liés à une formation et un utilisateur spécifiques.
+ *     parameters:
+ *       - in: path
+ *         name: code_formation
+ *         required: true
+ *         description: Code de la formation
+ *         schema:
+ *           type: integer
+ *       - in: path
+ *         name: code_utilisateur
+ *         required: true
+ *         description: Code de l'utilisateur
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Liste des paiements
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Paiement'
+ *       500:
+ *         description: Erreur interne au serveur
+ */
+export const rapporterPaiementsParFormationUtilisateur = async (req: Request, res: Response): Promise<void> => {
+  try {
+      const code_formation = Number(req.params.code_formation);
+      const code_utilisateur = Number(req.params.code_utilisateur);
+
+      const paiements = await Paiement.findAll({
+          where: {
+              code_formation: code_formation,
+              code_utilisateur: code_utilisateur,
+          },
+          include: [
+              {
+                  model: Formation,
+                  as: 'transaction_formation',
+                  attributes: ['code_formation', 'nom_formation', 'cout_formation', 'publication'],
+              },
+              {
+                  model: Participant,
+                  as: 'transaction_participant',
+                  attributes: ['code_participant', 'code_utilisateur'],
+              },
+              {
+                  model: Utilisateur,
+                  as: 'transaction_utilisateur',
+                  attributes: ['code_utilisateur', 'nom', 'prenom'],
+              }
+          ],
+      });
+
+      res.json(paiements.length);
+  } catch (error) {
+      console.error(error);
+      res.status(500).send(`Une erreur s'est produite lors de la récupération des paiements.`);
+  }
+};
+
+
+
 // Rapport de paiement par numéro de facture
 /**
  * @swagger

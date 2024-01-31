@@ -91,10 +91,11 @@ export const AuthUtilisateur = async (req: Request, res: Response): Promise<void
       // Vérifiez si le mot de passe correspond
       if (utilisateur.mot_de_passe === mot_de_passe) {
         const roleUtilisateur = utilisateur.code_role;
+        const codeUtilisateur = utilisateur.code_utilisateur;
         // Générer un token JWT
         const token = jwt.sign({ nom: utilisateur.nom }, JWT_SECRET, { expiresIn: '24h' });
 
-        res.json({ token, roleUtilisateur });
+        res.json({ token, roleUtilisateur, codeUtilisateur });
       } else {
         res.status(401).json({ message: `Nom d'utilisateur ou mot de passe incorrect` });
       }

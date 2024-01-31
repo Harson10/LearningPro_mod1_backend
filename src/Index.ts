@@ -21,21 +21,6 @@ const cors = require("cors");
 const App = express();
 const port = process.env.PORT || 4000;
 
-/**
- * 1. Creer la base de données avec l'invite de commande shell de postgres:
- * CREATE DATABASE learning_pro_mod1
-    WITH
-    OWNER = postgres
-    ENCODING = 'UTF8'
-    LC_COLLATE = 'French_France.1252'
-    LC_CTYPE = 'French_France.1252'
-    TABLESPACE = pg_default
-    CONNECTION LIMIT = -1
-    IS_TEMPLATE = False;
-
-    2. Lancer l'application avec la commande: `yarn start-dev`
- */
-
 // Adresse de l'application React en front-end
 // App.use(cors({ origin: 'http://localhost:3000' }));
 App.use(cors());
