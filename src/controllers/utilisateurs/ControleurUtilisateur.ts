@@ -3,7 +3,8 @@ import jwt from 'jsonwebtoken';
 import Utilisateur from "../../models/utilisateurs/Utilisateur";
 import Role from "../../models/utilisateurs/Role";
 import { JWT_SECRET } from "../../config/env";
-import sequelize from "../../config/Database"; 
+// import sequelize from "../../config/Database"; 
+// import bcrypt from "bcrypt";
 
 
 /**
@@ -24,6 +25,8 @@ import sequelize from "../../config/Database";
  *         sexe:
  *           type: string
  *         profession:
+ *           type: string
+ *         mot_de_passe:
  *           type: string
  *         code_role:
  *           type: integer
@@ -74,6 +77,39 @@ import sequelize from "../../config/Database";
  *                   type: string
  */
 /**************************************Auth*********************************************/
+// export const AuthUtilisateur = async (req: Request, res: Response): Promise<void> => {
+//   const { nom, prenom, mot_de_passe } = req.body;
+
+//   try {
+//     // Cherchez l'utilisateur dans la base de données par nom d'utilisateur
+//     const utilisateur = await Utilisateur.findOne({
+//       where: {
+//         nom: nom,
+//         prenom: prenom
+//       },
+//     });
+
+//     if (utilisateur) {
+//       // Vérifiez si le mot de passe correspond au hash stocké
+//       const motDePasseValide = await bcrypt.compare(mot_de_passe, utilisateur.mot_de_passe);
+//       if (motDePasseValide) {
+//         const roleUtilisateur = utilisateur.code_role;
+//         const codeUtilisateur = utilisateur.code_utilisateur;
+//         // Générer un token JWT
+//         const token = jwt.sign({ nom: utilisateur.nom }, JWT_SECRET, { expiresIn: '24h' });
+
+//         res.json({ token, roleUtilisateur, codeUtilisateur });
+//       } else {
+//         res.status(401).json({ message: `Nom d'utilisateur ou mot de passe incorrect` });
+//       }
+//     } else {
+//       res.status(401).json({ message: `Nom d'utilisateur ou mot de passe incorrect` });
+//     }
+//   } catch (error) {
+//     console.error(`Erreur lors de la vérification des informations d'identification :`, error);
+//     res.status(500).json({ message: 'Erreur serveur' });
+//   }
+// }
 export const AuthUtilisateur = async (req: Request, res: Response): Promise<void> => {
   const { nom, prenom, mot_de_passe } = req.body;
 
@@ -151,8 +187,6 @@ export const AuthUtilisateur = async (req: Request, res: Response): Promise<void
  *               properties:
  *                 code_role:
  *                   type: number
- *                 mot_de_passe:
- *                   type: string
  *                 nom:
  *                   type: string
  *                 prenom:
@@ -162,6 +196,8 @@ export const AuthUtilisateur = async (req: Request, res: Response): Promise<void
  *                 sexe:
  *                   type: string
  *                 profession:
+ *                   type: string
+ *                 mot_de_passe:
  *                   type: string
  *       500:
  *         description: Erreur serveur lors de la création de l'utilisateur
@@ -173,6 +209,28 @@ export const AuthUtilisateur = async (req: Request, res: Response): Promise<void
  *                 message:
  *                   type: string
  */
+// export const creerUtilisateur = async (req: Request, res: Response): Promise<void> => {
+//   try {
+//     const { code_role, mot_de_passe, nom, prenom, adresse, sexe, profession } = req.body;
+//     const motDePasseHash = await bcrypt.hash(mot_de_passe, 10); // 10 est le coût de calcul (plus il est élevé, plus c'est sécurisé mais lent)
+
+//     const nouvel_utilisateur = await Utilisateur.create({
+//       code_role,
+//       nom,
+//       prenom,
+//       adresse,
+//       sexe,
+//       profession,
+//       mot_de_passe: motDePasseHash// Stocker le hash du mot de passe
+//     });
+
+//     console.log("Nouvel utilisateur créé :", nouvel_utilisateur);
+//     res.json(nouvel_utilisateur);
+//   } catch (error) {
+//     console.error("Erreur lors de la création de l'utilisateur :", error);
+//     res.status(500).send(`Une erreur s'est produite lors de la création de l'utilisateur.`);
+//   }
+// };
 export const creerUtilisateur = async (req: Request, res: Response): Promise<void> => {
   try {
     console.log("Requête de création d'utilisateur reçue :", req.body);
@@ -213,7 +271,7 @@ export const creerUtilisateur = async (req: Request, res: Response): Promise<voi
 export const rapporterUtilisateurs = async (req: Request, res: Response): Promise<void> => {
   try {
     const utilisateurs = await Utilisateur.findAll({
-      attributes: ['code_utilisateur', 'code_role', 'nom', 'prenom', 'adresse', 'sexe', 'profession'],
+      attributes: ['code_utilisateur', 'code_role', 'nom', 'prenom', 'adresse', 'sexe', 'profession','mot_de_passe'],
     });
 
     const codesRoles = utilisateurs.map((utilisateur) => utilisateur.code_role);
@@ -237,6 +295,7 @@ export const rapporterUtilisateurs = async (req: Request, res: Response): Promis
       adresse: utilisateur.adresse,
       sexe: utilisateur.sexe,
       profession: utilisateur.profession,
+      mot_de_passe: utilisateur.mot_de_passe,
       code_role: utilisateur.code_role,
       role: rolesMap[utilisateur.code_role],
     }));
@@ -272,7 +331,7 @@ export const rapporterUtilisateurs = async (req: Request, res: Response): Promis
 export const rapporterUtilisateursParRole = async (req: Request, res: Response): Promise<void> => {
   try {
     const utilisateurs = await Utilisateur.findAll({
-      attributes: ['code_utilisateur', 'code_role', 'nom', 'prenom', 'adresse', 'sexe', 'profession'],
+      attributes: ['code_utilisateur', 'code_role', 'nom', 'prenom', 'adresse', 'sexe', 'profession','mot_de_passe'],
     });
 
     const codesRoles = utilisateurs.map((utilisateur) => utilisateur.code_role);
@@ -298,6 +357,7 @@ export const rapporterUtilisateursParRole = async (req: Request, res: Response):
         adresse: utilisateur.adresse,
         sexe: utilisateur.sexe,
         profession: utilisateur.profession,
+        mot_de_passe: utilisateur.mot_de_passe,
         code_role: utilisateur.code_role,
         role: rolesMap[utilisateur.code_role],
       }));
@@ -399,12 +459,12 @@ export const modifierUtilisateur = async (req: Request, res: Response): Promise<
       res.status(404).send(`Utilisateur non trouvé.`);
     } else {
       utilisateur_a_modifier.code_role = code_role;
-      utilisateur_a_modifier.mot_de_passe = mot_de_passe;
       utilisateur_a_modifier.nom = nom;
       utilisateur_a_modifier.prenom = prenom;
       utilisateur_a_modifier.adresse = adresse;
       utilisateur_a_modifier.sexe = sexe;
       utilisateur_a_modifier.profession = profession;
+      utilisateur_a_modifier.mot_de_passe = mot_de_passe;
       await utilisateur_a_modifier.save();
       res.json(utilisateur_a_modifier);
     }

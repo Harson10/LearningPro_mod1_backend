@@ -1,6 +1,7 @@
+
 import { Router } from "express";
 import {
-    creerEtape, 
+    creerEtape,
     rapporterEtapes,
     rapporterParNumEtape,
     rapporteEtapeParCodeModule,
@@ -22,3 +23,4 @@ routeurEtape.delete("/supprimer/:num_etape", supprimerEtape);
 routeurEtape.delete("/supprimer/par_module/:code_module", supprimerEtapeParCodeModule);
 
 export default routeurEtape;
+

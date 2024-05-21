@@ -16,15 +16,15 @@ import { Authentification } from "./middlewares/Authentification";
 import RouteurRole from "./router/utilisateurs/RouteurRole";
 import swaggerUi from 'swagger-ui-express';
 import swaggerJSDoc from 'swagger-jsdoc';
+import path from "path";
 
 const cors = require("cors");
 const App = express();
 const port = process.env.PORT || 4000;
 
-// Adresse de l'application React en front-end
-// App.use(cors({ origin: 'http://localhost:3000' }));
 App.use(cors());
 App.use(bodyParser.json());
+App.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
 const swaggerOptions = {
   definition: {
@@ -40,12 +40,14 @@ const swaggerOptions = {
 
 const swaggerSpec = swaggerJSDoc(swaggerOptions);
 
+
+
 // Liaison des routes
 App
   .use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec))
   .use("/role", RouteurRole)
   .use("/utilisateur", RouteurUtilisateur)
-  .use(Authentification)
+  // .use(Authentification)
   .use("/groupe", RouteurGroupe)
   .use("/administrateur", RouteurAdministrateur)
   .use("/formateur", RouteurFormateur)
@@ -55,7 +57,7 @@ App
   .use("/formation", RouteurFormation)
   .use("/paiement", RouteurPaiement)
   .use("/evaluation", RouteurEvaluation);
-
+  
   
   createDatabaseIfNotExists().then(() => {
     return Database.sync();
