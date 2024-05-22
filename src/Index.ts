@@ -64,7 +64,7 @@ App
   }).then(() => {
     console.log(`Base de données synchronisée.`);
 
-    App.listen(port, () => {
+    App.listen(port ,() => {
       console.log(`Serveur en cours d'exécution sur le port ${port}`);
     });
   }).catch((error) => {
