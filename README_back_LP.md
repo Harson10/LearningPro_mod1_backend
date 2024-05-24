@@ -29,12 +29,13 @@
     yarn start-dev
     ```
 
-   Ouvrez une invite de commande en tant qu'administrateur sur windows et cherchez l'adresse IP de l'ordinateur qui va servir de serveur (adresse Ipv4):
+   Ouvrez cmd en administrateur et cherchez l'adresse IP de l'ordinateur qui servira de serveur (adresse Ipv4):
     ```bash
     ipconfig
     ```
     
-   Le serveur sera accessible à l'adresse `http://{ADR_IP_PC_SERVEUR}:4000`.
+   Le serveur sera accessible à l'adresse :
+   `http://{ADR_IP_PC_SERVEUR}:4000`.
 
 ## Accès à Swagger
 
@@ -52,17 +53,18 @@
 
 ## Création d'un Utilisateur Administrateur
 
-   Utilisez Swagger pour créer un utilisateur Administrateur à l'endpoint `/utilisateur/creer` en utilisant le code_role de rôle fraîchement créé.
+   Utilisez Swagger pour créer un utilisateur Administrateur à l'endpoint `/utilisateur/creer`, 
+   en utilisant le code_role de rôle fraîchement créé.
 
 ## Authentification
 
    1. Utilisez l'endpoint `/utilisateur/connexion` pour vous authentifier.
 
-   2. Copiez le token fourni dans la réponse.
+   2. Copiez le `token` fourni dans la réponse.
 
 ## Configuration de Swagger pour l'Authentification
 
-   1. Sur la page Swagger, remontez jusqu'au bouton "Authorize".
+   1. Sur la page Swagger, remontez jusqu'au bouton `Authorize`.
 
    2. Cliquez sur le bouton et collez le token dans le champ de saisie.
 
