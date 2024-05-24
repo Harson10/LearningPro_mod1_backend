@@ -14,8 +14,7 @@
     ```
 
 ## Créez le fichier ".env" à la racine du projet avec les valeurs suivant:
-
-    ```bash
+    ```
     POSTGRES_HOST='0.0.0.0'
     POSTGRES_PORT=5432
     POSTGRES_USER=postgres
