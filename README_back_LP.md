@@ -20,12 +20,11 @@
     POSTGRES_PASSWORD=pga
     POSTGRES_DB=learning_pro_mod1
     JWT_SECRET=test_jwt2
-    ```
 
 
 ## Démarrage du Serveur
 
-   Utilisez la commande suivante pour démarrer le serveur en mode développement :
+   Utilisez la commande suivante pour démarrer le serveur :
     ```bash
     yarn start-dev
     ```
